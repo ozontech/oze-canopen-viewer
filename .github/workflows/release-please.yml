@@ -12,12 +12,14 @@ permissions:
 
 jobs:
   release-please:
+    name: Release Management
     runs-on: self-hosted
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
+      - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v4
         id: release
         with:
@@ -31,12 +33,7 @@ jobs:
     if: ${{ needs.release-please.outputs.release_created }}
     runs-on: self-hosted
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
+      - uses: actions/checkout@v4
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
