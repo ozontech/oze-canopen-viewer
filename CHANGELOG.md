@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0 (2025-03-16)
+
+
+### Features
+
+* first commit ([447a135](https://github.com/ozontech/oze-canopen-viewer/commit/447a13543e38f9cbec0be68e9618db3f4365c926))
+
 ## 0.1.0 (2025-03-14)
 
 
