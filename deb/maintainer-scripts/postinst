@@ -1,0 +1,4 @@
+#!/bin/sh
+
+set -e
+setcap cap_NET_ADMIN=ep /usr/bin/oze-canopen-viewer
