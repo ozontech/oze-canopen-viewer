@@ -1,0 +1,47 @@
+[package]
+name = "oze-canopen-viewer"
+version = "0.0.0"
+edition = "2021"
+description = "OZON CanOpenViewer"
+rust-version = "1.75"
+authors = ["OZON TECH", "Aleksandr Lutsai <s.lyra@ya.ru>"]
+license = "Apache-2.0"
+exclude = ["docker/", ".*"]
+homepage = "https://github.com/ozontech/oze-canopen-viewer"
+repository = "https://github.com/ozontech/oze-canopen-viewer"
+
+
+[dependencies]
+oze-canopen = "0.1.0"
+catppuccin-egui = { version="5.3", default-features = false, features = ["egui29"] }
+
+egui = "0.29"
+eframe = { version = "0.29", default-features = false, features = ["glow"] }
+egui_plot = { version = "0.29", features = ["default"] }
+
+chrono = { version = "0.4", default-features = false }
+rand = "0.8.5"
+tokio = { version = "1.36", features = ["full", "tracing"] }
+futures-util = "0.3.31"
+serde = { version = "1.0", features = ["derive"] }
+bincode = "1.3"
+clap = { version = "4.5.23", features = ["derive"] }
+log = "0.4"
+pretty_env_logger = "0.5.0"
+regex = "1.11.1"
+tracing = "0.1.41"
+bitflags = { version = "2.5", features = ["serde"] }
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+must_use_candidate = { level = "allow" }
+unwrap_used = { level = "allow" }
+panic = { level = "warn" }
+
+[package.metadata.deb]
+depends = ["can-utils", "libcap2-bin"]
+maintainer-scripts = "deb/maintainer-scripts"
+assets = [
+    # binary
+    ["target/release/oze-canopen-viewer", "usr/bin/", "755"],
+]
