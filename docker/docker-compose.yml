@@ -1,0 +1,7 @@
+services:
+  builder:
+    build: .
+    volumes:
+      - ../:/build
+    cap_add:
+      - NET_ADMIN

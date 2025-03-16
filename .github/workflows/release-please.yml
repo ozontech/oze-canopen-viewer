@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request: {}
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  RUSTFLAGS: -C debuginfo=0
+
+jobs:
+  check:
+    runs-on: self-hosted
+    steps:
+      - name: check out repository
+        uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - name: check formatting
+        run: cargo fmt --all --check
+      - name: Run Clippy
+        run: cargo clippy --all -- -D warnings
+
+  release_please:
+    name: Release Management
+    needs: [check]
+    runs-on: self-hosted
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Release
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: .github/release-please-config.json
+          manifest-file: .github/release-please-manifest.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish Packages
+    needs: release_please
+    if: ${{ needs.release_please.outputs.release_created == 'true' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # do not required for self-hosted
+      #      - name: Install dependencies
+      #        run: sudo apt-get update && sudo apt-get install -y dh-make
+
+      - name: Install cargo-deb
+        run: cargo install cargo-deb
+
+      - name: Build project
+        run: |
+          cargo deb -v
+          mv target/release/oze-canopen-viewer ./target/oze-canopen-viewer-x64-ubuntu-24-04
+          mv target/debian/oze-canopen-viewer*.deb ./target/oze-canopen-viewer-x64-ubuntu-24-04.deb
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary
+          path: ./target/oze-canopen-viewer*
+
+      - name: Upload Release Artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload --clobber ${{ needs.release_please.outputs.tag_name }} ./target/oze-canopen-viewer*
