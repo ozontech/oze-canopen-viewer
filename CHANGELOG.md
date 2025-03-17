@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/ozontech/oze-canopen-viewer/compare/oze-canopen-viewer-v0.1.0...oze-canopen-viewer-v0.1.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* use ubuntu-latest ([36176dc](https://github.com/ozontech/oze-canopen-viewer/commit/36176dc819af634bfe240cd9a6465c5b0a8889cd))
+* use ubuntu-latest ([d02b057](https://github.com/ozontech/oze-canopen-viewer/commit/d02b057d5933900923581d2430a32a7e1144e381))
+
 ## 0.1.0 (2025-03-16)
 
 
